@@ -2415,7 +2415,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
        }
        return true;
    }
-
+   
    // Store to disk
    if (!pblock->AcceptBlock(state, dbp))
        return error("ProcessBlock() : AcceptBlock FAILED");
@@ -3310,6 +3310,14 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
        uint64 nNonce = 1;
        vRecv >> pfrom->nVersion >> pfrom->nServices >> nTime >> addrMe;
        if (pfrom->nVersion < MIN_PROTO_VERSION)
+       {
+           // Since February 20, 2012, the protocol is initiated at version 209,
+           // and earlier versions are no longer supported
+           printf("partner %s using obsolete version %i; disconnecting\n", pfrom->addr.ToString().c_str(), pfrom->nVersion);
+           pfrom->fDisconnect = true;
+           return false;
+       }
+       if (pfrom->nVersion < 70002)
        {
            // Since February 20, 2012, the protocol is initiated at version 209,
            // and earlier versions are no longer supported
