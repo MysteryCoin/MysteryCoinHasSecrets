@@ -826,6 +826,16 @@ bool AppInit2(boost::thread_group& threadGroup)
             fReindex = true;
         }
     }
+    
+    filesystem::path hardforkFile = GetDataDir() / "hardfork1.dat";
+    if (!filesystem::exists(hardforkFile))
+    {
+    	// If we've just updated, reindex the blockchain to invalidate the invalid mined blocks.
+    	filesystem::ofstream file(hardforkFile);    	
+    	file.close();
+    	printf("Reindexing blockchain due to hardfork...\n");
+    	fReindex = true;
+    }   
 
     // cache size calculations
     size_t nTotalCache = GetArg("-dbcache", 25) << 20;
