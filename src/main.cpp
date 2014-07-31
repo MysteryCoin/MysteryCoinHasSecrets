@@ -1816,8 +1816,8 @@ uint256 prevHash = 0;
                // printf("==> Got prevHash = %s\n", prevHash.ToString().c_str());
        }
 
-   //if (vtx[0].GetValueOut() > GetBlockValue(pindex->nHeight, nFees, prevHash))
-   //    return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(pindex->nHeight, nFees, prevHash)));
+   if (vtx[0].GetValueOut() > GetBlockValue(pindex->nHeight, nFees, prevHash))
+       return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(pindex->nHeight, nFees, prevHash)));
 
    if (!control.Wait())
        return state.DoS(100, false);
